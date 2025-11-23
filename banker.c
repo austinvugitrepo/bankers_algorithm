@@ -18,7 +18,32 @@ if(f == NULL){
     return 1;
   }
 
-printf("file exists!\n");
+//reading processes
+int n;
+int process = fscanf(f, "%d", &n);
+
+//checker for if not able to read processes
+if(process != 1){
+  fprintf(stderr, "Could not read processes.\n");
+  fclose(f);
+  return 1;
+  }
+//print result
+printf("There are %d processes in the system.\n", n);
+  
+//reading resources
+int m;
+int resource = fscanf(f, "%d", &m);
+
+//checker for if not able to read resources
+if(resource != 1){
+  fprintf(stderr, "Could not read resources.\n");
+  fclose(f);
+  return 1;
+  }
+//print result
+printf("There are %d resources in the system.\n", m);
+
 
 fclose(f);
 
