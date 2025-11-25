@@ -3,6 +3,7 @@
 
 
 int main( int argc, char *argv[]) { //accepting cli args
+printf("\n");
 
 //argument checker
 if(argc != 2){
@@ -43,6 +44,8 @@ if(resource != 1){
   }
 //print result
 printf("There are %d resources in the system.\n", m);
+
+printf("\n");
 
 // allocating memory for n * m allocation matrix
 int mtrxsize = n * m; // size of matrix by combining processes and resources
@@ -92,8 +95,57 @@ printf("%d:   ", i);
   printf("\n"); //new line for matrix 
 }
 
-free(allocmtrx);
-fclose(f);
+// allocating memory for n * m max matrix
+int* maxmtrx;
+maxmtrx = malloc(mtrxsize * sizeof(int));
 
-  return 0;
+//if allocation fails
+if (maxmtrx == NULL){
+  fprintf(stderr, "Could not allocate memory for max matrix.\n");
+  fclose(f);
+  return 1;
+}
+
+//read from file, add to array, then print array for max matrix 
+printf("\n---> Max Matrix <---\n\n");
+//label resource column with A,B,C,D....
+printf("     "); //spacing so the label aligns
+for(int j = 0; j < m; j++){
+ if(j > 25){ // z caps at 25
+    printf("m%d", j);
+  } else{
+   printf("%c ", 'A'+ j); //print character for letters (ascii: A is 65 so and is incrementing via j)
+}
+
+}
+printf("\n\n");
+for(int i = 0; i < n; i++){
+//label process row
+printf("%d:   ", i);
+
+  for(int j = 0; j < m; j++){
+    //index for 2D effect because I allocated memory in a 1d way
+     int idx = (i * m) + j; // (row index (i in this case) * column) = you get a 2D effect and add j (column index) to simulate incrementing 
+    //read one integer at a time
+    int readint = fscanf(f, "%d", &maxmtrx[idx]);
+
+    //if read fails
+    if(readint != 1){
+      fprintf(stderr, "Could not read array or failure while reading array.\n");
+      free(maxmtrx); // free memory cuz of failure
+      fclose(f);
+      return 1;
+    }
+
+  printf("%d ", maxmtrx[idx]);
+  }
+  printf("\n"); //new line for matrix 
+}
+
+
+free(allocmtrx);
+free(maxmtrx);
+fclose(f); //close file
+
+return 0;
 }
