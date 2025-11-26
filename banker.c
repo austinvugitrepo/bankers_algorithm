@@ -64,7 +64,7 @@ printf("---> Allocation Matrix <---\n\n");
 //label resource column with A,B,C,D....
 printf("     "); //spacing so the label aligns
 for(int j = 0; j < m; j++){
- if(j > 25){ // z caps at 25
+ if(j >= 26){ // z caps at 25
     printf("m%d", j);
   } else{
    printf("%c ", 'A'+ j); //print character for letters (ascii: A is 65 so and is incrementing via j)
@@ -102,6 +102,7 @@ maxmtrx = malloc(mtrxsize * sizeof(int));
 //if allocation fails
 if (maxmtrx == NULL){
   fprintf(stderr, "Could not allocate memory for max matrix.\n");
+  free(allocmtrx);
   fclose(f);
   return 1;
 }
@@ -111,7 +112,7 @@ printf("\n---> Max Matrix <---\n\n");
 //label resource column with A,B,C,D....
 printf("     "); //spacing so the label aligns
 for(int j = 0; j < m; j++){
- if(j > 25){ // z caps at 25
+ if(j >= 26){ // z caps at 25
     printf("m%d", j);
   } else{
    printf("%c ", 'A'+ j); //print character for letters (ascii: A is 65 so and is incrementing via j)
@@ -133,6 +134,7 @@ printf("%d:   ", i);
     if(readint != 1){
       fprintf(stderr, "Could not read array or failure while reading array.\n");
       free(maxmtrx); // free memory cuz of failure
+      free(allocmtrx);
       fclose(f);
       return 1;
     }
@@ -142,9 +144,97 @@ printf("%d:   ", i);
   printf("\n"); //new line for matrix 
 }
 
+// allocating memory for n * m need matrix (max - allocation)
+int* needmtrx;
+needmtrx = malloc(mtrxsize * sizeof(int));
+
+//if allocation fails
+if (needmtrx == NULL){
+  fprintf(stderr, "Could not allocate memory for need matrix.\n");
+  free(maxmtrx); // free memory cuz of failure
+  free(allocmtrx);
+  fclose(f);
+  return 1;
+}
+
+//calculate need matrix then print array for it 
+printf("\n---> Need Matrix <---\n\n");
+//label resource column with A,B,C,D....
+printf("     "); //spacing so the label aligns
+for(int j = 0; j < m; j++){
+ if(j >= 26){ // z caps at 25
+    printf("m%d", j);
+  } else{
+   printf("%c ", 'A'+ j); //print character for letters (ascii: A is 65 so and is incrementing via j)
+}
+
+}
+printf("\n\n");
+for(int i = 0; i < n; i++){
+//label process row
+printf("%d:   ", i);
+
+  for(int j = 0; j < m; j++){
+    //index for 2D effect because I allocated memory in a 1d way
+     int idx = (i * m) + j; // (row index (i in this case) * column) = you get a 2D effect and add j (column index) to simulate incrementing 
+    //calculate need matrix
+    needmtrx[idx] = maxmtrx[idx] - allocmtrx[idx];
+    printf("%d ", needmtrx[idx]);
+  }
+  printf("\n"); //new line for matrix 
+}
+
+
+// allocating memory for 1 * m available vector
+int* availablev;
+availablev = malloc(m * sizeof(int));
+
+//if allocation fails
+if (availablev == NULL){
+  fprintf(stderr, "Could not allocate memory for available vector.\n");
+  free(allocmtrx);
+  free(maxmtrx);
+  free(needmtrx); 
+  fclose(f);
+  return 1;
+}
+
+//read from file, add to array, then print array for max matrix 
+printf("\n---> Available Vector <---\n\n");
+//label resource column with A,B,C,D....
+for(int j = 0; j < m; j++){
+ if(j >= 26){ // z caps at 25
+    printf("m%d", j);
+  } else{
+   printf("%c ", 'A'+ j); //print character for letters (ascii: A is 65 so and is incrementing via j)
+}
+
+}
+printf("\n\n");
+
+for(int j = 0; j < m; j++){
+    //read one integer at a time
+    int readint = fscanf(f, "%d", &availablev[j]);
+    //if read fails
+    if(readint != 1){
+      fprintf(stderr, "Could not read array or failure while reading array.\n");
+      free(maxmtrx); // free memory cuz of failure
+      free(allocmtrx);
+      free(needmtrx);
+      free(availablev);
+      fclose(f);
+      return 1;
+    }
+    printf("%d ", availablev[j]);
+  }
+
+
+
 
 free(allocmtrx);
 free(maxmtrx);
+free(needmtrx);
+free(availablev);
 fclose(f); //close file
 
 return 0;
