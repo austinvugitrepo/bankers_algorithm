@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <stdbool.h>
 
 int main( int argc, char *argv[]) { //accepting cli args
 printf("\n");
@@ -228,13 +228,98 @@ for(int j = 0; j < m; j++){
     printf("%d ", availablev[j]);
   }
 
+// work vector
+int* workvec;
+workvec = malloc(m * sizeof(int));
+
+//if allocation fails 
+if(workvec == NULL){
+  fprintf(stderr, "Could not allocate memory for work vector.\n");
+  free(maxmtrx); // free memory cuz of failure
+  free(allocmtrx);
+  free(needmtrx);
+  free(availablev);
+  fclose(f);
+  return 1;
+
+  }
+//make work vector same as available vector 
+for(int j = 0; j < m; j++){
+ workvec[j] = availablev[j];
+  }
+
+// finish vector 
+int* finishvec;
+// have to initialize to 0 (false) as well when mallocing so i will use calloc instead
+finishvec = calloc(n, sizeof(int)); // , instead of *
+
+//if allocation fails 
+if(finishvec == NULL){
+  fprintf(stderr, "Could not allocate memory for finish vector.\n");
+  free(maxmtrx); // free memory cuz of failure
+  free(allocmtrx);
+  free(needmtrx);
+  free(availablev);
+  free(workvec);
+  fclose(f);
+  return 1;
+
+  }
+// start of banker saftey algorithim portion
+int safe_sequence[n]; //to hold the sequence of processes
+int counter = 0; // for processes added to safe_sequence[n]
+
+bool foundProcess; // for finding process 
+
+do{
+    foundProcess = false;
+    // go through all processes
+    for(int i = 0; i < n; i++){
+      // if process has not finished
+      if(finishvec[i] == 0){
+       //we also want need <=work 
+       bool can_run = true; //processes can run, go through processes
+       for(int j = 0; j < m; j++){
+        int idx = (i * m) + j; // for need matrix
+        if(needmtrx[idx] > workvec[j]){
+            can_run = false;
+            break;
+          }
+        }
+      if(can_run == true){
+        // update workvec and finishvec
+        for(int j = 0; j < m; j++){
+         int idx = (i * m) + j;
+         workvec[j] += allocmtrx[idx];
+         
+          }
+          finishvec[i] = 1;
+          safe_sequence[counter++] = i;
+          foundProcess = true;
+        }
+      }
+
+      
+
+    }
 
 
+  } while( foundProcess == true);
+
+//saftey result, check if all processes are finished
+printf("\n\n");
+if(counter == n){
+    printf("THE SYSTEM IS IN A SAFE STATE!");
+  } else {
+    printf("THE SYSTEM IS NOT IN A SAFE STATE!");
+  }
 
 free(allocmtrx);
 free(maxmtrx);
 free(needmtrx);
 free(availablev);
+free(workvec);
+free(finishvec);
 fclose(f); //close file
 
 return 0;
