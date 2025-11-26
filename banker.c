@@ -21,10 +21,10 @@ if(f == NULL){
 
 //reading processes
 int n;
-int process = fscanf(f, "%d", &n);
+bool process = fscanf(f, "%d", &n);
 
 //checker for if not able to read processes
-if(process != 1){
+if(process != true){
   fprintf(stderr, "Could not read processes.\n");
   fclose(f);
   return 1;
@@ -34,10 +34,10 @@ printf("There are %d processes in the system.\n", n);
   
 //reading resources
 int m;
-int resource = fscanf(f, "%d", &m);
+bool resource = fscanf(f, "%d", &m);
 
 //checker for if not able to read resources
-if(resource != 1){
+if(resource != true){
   fprintf(stderr, "Could not read resources.\n");
   fclose(f);
   return 1;
@@ -80,10 +80,10 @@ printf("%d:   ", i);
     //index for 2D effect because I allocated memory in a 1d way
      int idx = (i * m) + j; // (row index (i in this case) * column) = you get a 2D effect and add j (column index) to simulate incrementing 
     //read one integer at a time
-    int readint = fscanf(f, "%d", &allocmtrx[idx]);
+    bool readint = fscanf(f, "%d", &allocmtrx[idx]);
 
     //if read fails
-    if(readint != 1){
+    if(readint != true){
       fprintf(stderr, "Could not read array or failure while reading array.\n");
       free(allocmtrx); // free memory cuz of failure
       fclose(f);
@@ -128,10 +128,10 @@ printf("%d:   ", i);
     //index for 2D effect because I allocated memory in a 1d way
      int idx = (i * m) + j; // (row index (i in this case) * column) = you get a 2D effect and add j (column index) to simulate incrementing 
     //read one integer at a time
-    int readint = fscanf(f, "%d", &maxmtrx[idx]);
+    bool readint = fscanf(f, "%d", &maxmtrx[idx]);
 
     //if read fails
-    if(readint != 1){
+    if(readint != true){
       fprintf(stderr, "Could not read array or failure while reading array.\n");
       free(maxmtrx); // free memory cuz of failure
       free(allocmtrx);
@@ -199,7 +199,7 @@ if (availablev == NULL){
   return 1;
 }
 
-//read from file, add to array, then print array for max matrix 
+//read from file, add to array, then print array for available vector  
 printf("\n---> Available Vector <---\n\n");
 //label resource column with A,B,C,D....
 for(int j = 0; j < m; j++){
@@ -214,9 +214,9 @@ printf("\n\n");
 
 for(int j = 0; j < m; j++){
     //read one integer at a time
-    int readint = fscanf(f, "%d", &availablev[j]);
+    bool readint = fscanf(f, "%d", &availablev[j]);
     //if read fails
-    if(readint != 1){
+    if(readint != true){
       fprintf(stderr, "Could not read array or failure while reading array.\n");
       free(maxmtrx); // free memory cuz of failure
       free(allocmtrx);
@@ -314,12 +314,87 @@ if(counter == n){
     printf("THE SYSTEM IS NOT IN A SAFE STATE!");
   }
 
+printf("\n\n");
+
+
+// request vector
+int* reqvec;
+reqvec = malloc(m * sizeof(int));
+
+//if allocation fails 
+if(reqvec == NULL){
+  fprintf(stderr, "Could not allocate memory for request vector.\n");
+  free(maxmtrx); // free memory cuz of failure
+  free(allocmtrx);
+  free(needmtrx);
+  free(availablev);
+  free(workvec);
+  free(finishvec); 
+  fclose(f);
+  return 1;
+
+  }
+// request process index
+int reqpidx;
+//reading index
+bool readprocid = fscanf(f, "%d:", &reqpidx);
+if(readprocid != true){
+ fprintf(stderr, "Could not read request process index.\n");  
+ free(allocmtrx);
+ free(maxmtrx);
+ free(needmtrx);
+ free(availablev);
+ free(workvec);
+ free(finishvec);
+ free(reqvec);
+ fclose(f);
+ return 1;
+
+  }
+
+//read from file, add to array, then print array for request vector  
+printf("\n---> Request Vector <---\n\n");
+//label resource column with A,B,C,D....
+for(int j = 0; j < m; j++){
+ if(j >= 26){ // z caps at 25
+    printf("m%d", j);
+  } else{
+   printf("%c ", 'A'+ j); //print character for letters (ascii: A is 65 so and is incrementing via j)
+}
+
+}
+
+printf("\n\n");
+
+printf("%d:", reqpidx);
+for(int j = 0; j < m; j++){
+    //read one integer at a time
+    bool readint = fscanf(f, "%d", &reqvec[j]);
+    //if read fails
+    if(readint != true){
+      fprintf(stderr, "Could not read array or failure while reading array.\n");
+      free(allocmtrx);
+      free(maxmtrx);
+      free(needmtrx);
+      free(availablev);
+      free(workvec);
+      free(finishvec);
+      free(reqvec);
+      fclose(f); //close file
+     return 1;
+    }
+    printf("%d ", reqvec[j]);
+  }
+
+
+printf("\n\n");
 free(allocmtrx);
 free(maxmtrx);
 free(needmtrx);
 free(availablev);
 free(workvec);
 free(finishvec);
+free(reqvec);
 fclose(f); //close file
 
 return 0;
