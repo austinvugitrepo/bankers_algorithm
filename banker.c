@@ -249,8 +249,6 @@ if(reqvec == NULL){
   free(allocmtrx);
   free(needmtrx);
   free(availablev);
-  
-   
   fclose(f);
   return 1;
 
@@ -265,8 +263,6 @@ if(readprocid != true){
  free(maxmtrx);
  free(needmtrx);
  free(availablev);
- 
- 
  free(reqvec);
  fclose(f);
  return 1;
@@ -298,23 +294,20 @@ for(int j = 0; j < m; j++){
       free(maxmtrx);
       free(needmtrx);
       free(availablev);
-      
-      
       free(reqvec);
       fclose(f); //close file
      return 1;
     }
     printf("%d ", reqvec[j]);
   }
-
+// start of resource-request algorithim
+resource_grant(n, m, reqvec, reqpidx, allocmtrx, needmtrx, availablev);
 
 printf("\n\n");
 free(allocmtrx);
 free(maxmtrx);
 free(needmtrx);
 free(availablev);
-
-
 free(reqvec);
 fclose(f); //close file
 

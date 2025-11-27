@@ -7,5 +7,6 @@
 
 //banker safe algorithim prototype for part g
 bool safealgo(int n, int m, int* allocmtrx, int* needmtrx, int* availablev, int* safe_sequence);
-
+// resource request algorithim protoype for part i
+void resource_grant(int n, int m, int* reqvec, int reqpidx, int* allocmtrx, int* needmtrx, int* availablev);
 #endif 
