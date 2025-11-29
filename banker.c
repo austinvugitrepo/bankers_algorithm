@@ -300,6 +300,7 @@ for(int j = 0; j < m; j++){
     }
     printf("%d ", reqvec[j]);
   }
+printf("\n\n");
 // start of resource-request algorithim
 resource_grant(n, m, reqvec, reqpidx, allocmtrx, needmtrx, availablev);
 
