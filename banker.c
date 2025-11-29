@@ -303,7 +303,21 @@ for(int j = 0; j < m; j++){
 printf("\n\n");
 // start of resource-request algorithim
 resource_grant(n, m, reqvec, reqpidx, allocmtrx, needmtrx, availablev);
+// new available vector
+printf("\n---> Available Vector <---\n\n");
+//label resource column with A,B,C,D....
+for(int j = 0; j < m; j++){
+ if(j >= 26){ // z caps at 25
+    printf("m%d", j);
+  } else{
+   printf("%c ", 'A'+ j); //print character for letters (ascii: A is 65 so and is incrementing via j)
+}
 
+}
+printf("\n\n");
+for(int j = 0; j < m; j++){
+  printf("%d ", availablev[j]);
+  }
 printf("\n\n");
 free(allocmtrx);
 free(maxmtrx);
